@@ -5,6 +5,8 @@ import sys, pygame
 
 # https://www.101computing.net/sudoku-generator-algorithm/
 pygame.init()
+
+# class Game:
 valid = True
 game_end = False
 valid_entry = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -82,6 +84,18 @@ def validRow(row):
 def playGame(board):
 	while not game_end:
 		# printBoard(board)
+		printBoard(board)
+		print("Input value to update, use form: [")
+		updateBoard(board, sys.argv[0], (sys.argv[1], sys.argv[2]))
+		printBoard(board)
 		# get moves from sys
 		# updateBoard
 		# do validity checks
+
+
+def main():
+    print("Hello World!")
+    playGame(board)
+
+if __name__ == "__main__":
+    main()
