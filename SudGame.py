@@ -47,8 +47,19 @@ def checkDup(list):
 	return False
 
 def printBoard(board):
-	for i in board:
-		print(i)
+	# for i in board:
+	# 	print(i
+	print("-"*37)
+	for i, row in enumerate(board):
+		print(("|" + " {}   {}   {} |"*3).format(*[x if x != 0 else " " for x in row]))
+		if i == 8:
+			print("-"*37)
+		elif i % 3 == 2:
+			print("|" + "---+"*8 + "---|")
+		else:
+			print("|" + "   +"*8 + "   |")
+
+
 		
 def updateBoard(board, new_val, cords):
 	# cords should be an x,y tuple
@@ -85,17 +96,27 @@ def playGame(board):
 	while not game_end:
 		# printBoard(board)
 		printBoard(board)
-		print("Input value to update, use form: [")
-		updateBoard(board, sys.argv[0], (sys.argv[1], sys.argv[2]))
-		printBoard(board)
+		# input("Input value to update, use form: [new value] [x coordinate] [y coordinate] \n")
+		x = int(input("Enter x coordinate ((0,0) is top left): "))
+		y = int(input("Enter y coordinate (0 indexed): "))
+		new_val = int(input("Enter new value: "))
+		print(board[x][y])
+		print(board[y][x])
+		if board[x][y] != 0:
+			updateBoard(board, new_val, (x, y))
+			printBoard(board)
+			break
+		else:
+			print("Tile already filled")
+
 		# get moves from sys
 		# updateBoard
 		# do validity checks
 
 
 def main():
-    print("Hello World!")
-    playGame(board)
+	printBoard(board)
+    # playGame(board)
 
 if __name__ == "__main__":
     main()
