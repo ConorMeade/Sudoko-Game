@@ -3,12 +3,10 @@ import sys, pygame
 
 
 
-# https://www.101computing.net/sudoku-generator-algorithm/
 pygame.init()
 
 # class Game:
 valid = True
-game_end = False
 valid_entry = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
@@ -37,21 +35,20 @@ squares_dict = {
 	9: [board[6][6], board[6][7], board[6][8], board[7][6], board[7][7], board[7][8], board[8][6], board[8][7], board[8][8]],
 }
 
-def checkDup(list):
+def check_dup(list):
 	# checking valid rows, cols, squares on board
 	seen = set()
 	for x in list:
-		if x in seen:
+		if x in seen and x != 0:
 			return True
 		seen.add(x)
 	return False
 
-def printBoard(board):
-	# for i in board:
-	# 	print(i
+
+def print_board(board):
 	print("-"*37)
 	for i, row in enumerate(board):
-		print(("|" + " {}   {}   {} |"*3).format(*[x if x != 0 else " " for x in row]))
+		print(("|" + " {}   {}   {} |"*3).format(*[x if x != 0 else 0 for x in row]))
 		if i == 8:
 			print("-"*37)
 		elif i % 3 == 2:
@@ -61,62 +58,113 @@ def printBoard(board):
 
 
 		
-def updateBoard(board, new_val, cords):
+def update_board(board, new_val, cords):
 	# cords should be an x,y tuple
 	board[cords[0]][cords[1]] = new_val
+	return board
 
-def validCol(col_num):
+def valid_row(row):
+	# valid = True
+	if not check_dup(row):
+		return True
+	else:
+		return False
+
+
+
+def valid_col(col_num, board):
 	# zero indexed
 	col_vals = []
-	for x in board:
-		col.append(board[x][col_num])
+	for rows in board:
+		col_vals.append(rows[col_num])
+	print(col_vals)
 	
 
-	if not checkDup(col_vals):
+	if not check_dup(col_vals):
 		return True
 
 
-def validSquare(square_key):
+def valid_square(square_key):
 	# square_index is 1-9
-
-	if not checkDup(squares_dict[square_key]):
+	if not check_dup(squares_dict[square_key]):
 		return True
+	else:
+		return False
 
-	if not valid:
-		print("Invalid board state")
+
+def get_square_index(x, y):
+	if x <= 2 and y <= 2:
+		return 1
+	elif y <= 2 and x >= 3 and x <= 5:
+		return 2
+	elif y <= 2 and x >= 6:
+		return 3
+	elif x <= 2 and y >= 3 and y <= 5:
+		return 4
+	elif x >= 3 and x <= 5 and y >= 3 and y <= 5:
+		return 5
+	elif x >= 6 and y >= 3 and y <= 5:
+		return 6
+	elif x <= 2 and y >= 6:
+		return 7
+	elif x>= 3 and x <= 5 and y >= 6:
+		return 8
+	else:
+		return 9
+
+# print(get_square_index(1, 1)) # 1
+# print(get_square_index(3, 0)) # 2
+# print(get_square_index(8, 8)) # 9
+# print(get_square_index(6, 2)) # 3 
+# print(get_square_index(4, 5)) # 5
+# print(get_square_index(1, 5)) # 4
+# print(get_square_index(7, 3)) # 6
+# print(get_square_index(1, 7)) # 7
+
+
+def count_empty_tiles(board):
+	# how we will determine if the board is full, meaning the game should end
+	count = 0
+	for row in board:
+		count = count + row.count(0)
+	return count
+
+
+def erase_tile(board):
+	# need a means of changing a tile back to 0 if needed
 	pass
 
-def validRow(row):
-	# valid = True
-	if not checkDup(row):
-		return True
 
-
-def playGame(board):
+def play_game(board):
+	game_end = False
+	remaining_zeros = count_empty_tiles(board)
 	while not game_end:
-		# printBoard(board)
-		printBoard(board)
-		# input("Input value to update, use form: [new value] [x coordinate] [y coordinate] \n")
-		x = int(input("Enter x coordinate ((0,0) is top left): "))
-		y = int(input("Enter y coordinate (0 indexed): "))
+		print_board(board)
+		x = int(input("Enter x coordinate (left to right, (0,0) is top left): "))
+		y = int(input("Enter y coordinate (up and down, 0 indexed): "))
 		new_val = int(input("Enter new value: "))
-		print(board[x][y])
 		print(board[y][x])
-		if board[x][y] != 0:
-			updateBoard(board, new_val, (x, y))
-			printBoard(board)
+		# print(board[y][x])
+		square_index = get_square_index(x, y)
+		print('Index: ' + str(square_index))
+		if board[y][x] == 0:
+			remaining_zeros = remaining_zeros - 1
+			board = update_board(board, new_val, (y, x))
+			print_board(board)
 			break
 		else:
-			print("Tile already filled")
+			print("Tile already filled or invalid move in current board state")
+		if remaining_zeros == 0:
+			game_end = True
 
-		# get moves from sys
 		# updateBoard
 		# do validity checks
+		# need a means of changing a tile back to 0 if needed
 
 
 def main():
-	printBoard(board)
-    # playGame(board)
+    play_game(board)
+    # pass
 
 if __name__ == "__main__":
     main()
