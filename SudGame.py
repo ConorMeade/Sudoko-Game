@@ -22,6 +22,8 @@ board = [
 	[0, 0, 5, 2, 0, 6, 3, 0, 0]
 ]
 
+# make starting values immutable
+
 
 squares_dict = {
 	1: [board[0][0], board[0][1], board[0][2], board[1][0], board[1][1], board[1][2], board[2][0], board[2][1], board[2][2]],
@@ -60,7 +62,7 @@ def print_board(board):
 		
 def update_board(board, new_val, cords):
 	# cords should be an x,y tuple
-	board[cords[0]][cords[1]] = new_val
+	board[cords[1]][cords[0]] = new_val
 	return board
 
 def valid_row(row):
@@ -77,8 +79,6 @@ def valid_col(col_num, board):
 	col_vals = []
 	for rows in board:
 		col_vals.append(rows[col_num])
-	print(col_vals)
-	
 
 	if not check_dup(col_vals):
 		return True
@@ -130,28 +130,41 @@ def count_empty_tiles(board):
 	return count
 
 
-def erase_tile(board):
-	# need a means of changing a tile back to 0 if needed
-	pass
-
 
 def play_game(board):
 	game_end = False
 	remaining_zeros = count_empty_tiles(board)
+	delete_tile = False
+	starting_board = board
 	while not game_end:
+		print("Starting board:")
+		print_board(starting_board)
+		print("Current board:")
 		print_board(board)
+		remove_tile = input("Press Y if you want to remove a tile or any other key if you wish to update an empty title: ")
+		if remove_tile == 'Y':
+			delete_tile = True
+		else:
+			delete_tile = False
 		x = int(input("Enter x coordinate (left to right, (0,0) is top left): "))
 		y = int(input("Enter y coordinate (up and down, 0 indexed): "))
-		new_val = int(input("Enter new value: "))
-		print(board[y][x])
-		# print(board[y][x])
-		square_index = get_square_index(x, y)
-		print('Index: ' + str(square_index))
-		if board[y][x] == 0:
+		if not delete_tile:
+			new_val = int(input("Enter new value: "))
+		square_key = get_square_index(x, y)
+		print("Square values: " + str(squares_dict[square_key]))
+		print('Index: ' + str(square_key))
+		if delete_tile and board[y][x] != 0:  # deleting an existing entry
+			remaining_zeros = remaining_zeros + 1
+			board = update_board(board, 0, (x,y))
+		elif board[y][x] == 0  and not delete_tile:
 			remaining_zeros = remaining_zeros - 1
-			board = update_board(board, new_val, (y, x))
-			print_board(board)
-			break
+			board = update_board(board, new_val, (x, y))
+			# print_board(board)
+			if not valid_square(square_key) or not valid_row(board[y]) or not valid_col(x, board):
+				print("Validity check failed, reverting tile back to empty")
+				board = update_board(board, 0, (x, y))
+				remaining_zeros = remaining_zeros + 1
+
 		else:
 			print("Tile already filled or invalid move in current board state")
 		if remaining_zeros == 0:
