@@ -1,2 +1,2 @@
 # Sudoko-Game
-Working with pygame to create a sudoko game, GUI coming soon
+Commmand line level sudoko game. I am planning on using pygame to create a GUI at some point in the future.
