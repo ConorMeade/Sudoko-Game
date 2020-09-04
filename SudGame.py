@@ -11,17 +11,7 @@ valid = True
 valid_entry = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-board = [
-	[3, 0, 6, 5, 0, 8, 4, 0, 0],
-	[5, 2, 0, 0, 0, 0, 0, 0, 0],
-	[0, 8, 7, 0, 0, 0, 0, 3, 1],
-	[0, 0, 3, 0, 1, 0, 0, 8, 0],
-	[9, 0, 0, 8, 6, 3, 0, 0, 5],
-	[0, 5, 0, 0, 9, 0, 6, 0, 0],
-	[1, 3, 0, 0, 0, 0, 2, 5, 0],
-	[0, 0, 0, 0, 0, 0, 0, 7, 4],
-	[0, 0, 5, 2, 0, 6, 3, 0, 0]
-]
+board = boards.boards[3]
 
 # make starting values immutable
 
@@ -113,14 +103,6 @@ def get_square_index(x, y):
 	else:
 		return 9
 
-# print(get_square_index(1, 1)) # 1
-# print(get_square_index(3, 0)) # 2
-# print(get_square_index(8, 8)) # 9
-# print(get_square_index(6, 2)) # 3 
-# print(get_square_index(4, 5)) # 5
-# print(get_square_index(1, 5)) # 4
-# print(get_square_index(7, 3)) # 6
-# print(get_square_index(1, 7)) # 7
 
 
 def count_empty_tiles(board):
@@ -137,9 +119,10 @@ def play_game(board):
 	remaining_zeros = count_empty_tiles(board)
 	delete_tile = False
 	starting_board = board
+	print("Starting board:")
+	print_board(starting_board)
 	while not game_end:
-		print("Starting board:")
-		print_board(starting_board)
+		print("Remaining zeros: " + str(count_empty_tiles(board)))
 		print("Current board:")
 		print_board(board)
 		remove_tile = input("Press Y if you want to remove a tile or any other key if you wish to update an empty title: ")
@@ -152,33 +135,29 @@ def play_game(board):
 		if not delete_tile:
 			new_val = int(input("Enter new value: "))
 		square_key = get_square_index(x, y)
-		print("Square values: " + str(squares_dict[square_key]))
-		print('Index: ' + str(square_key))
 		if delete_tile and board[y][x] != 0:  # deleting an existing entry
 			remaining_zeros = remaining_zeros + 1
 			board = update_board(board, 0, (x,y))
-		elif board[y][x] == 0  and not delete_tile:
+		elif board[y][x] == 0  and not delete_tile:  # changing a z
 			remaining_zeros = remaining_zeros - 1
 			board = update_board(board, new_val, (x, y))
-			# print_board(board)
+			# validity check, done after updating baord
 			if not valid_square(square_key) or not valid_row(board[y]) or not valid_col(x, board):
 				print("Validity check failed, reverting tile back to empty")
+				# if validity check fails, revert that tile back to 0
 				board = update_board(board, 0, (x, y))
 				remaining_zeros = remaining_zeros + 1
-
 		else:
 			print("Tile already filled or invalid move in current board state")
 		if remaining_zeros == 0:
+			print("Congratulations!! You completed this puzzle!")
+			print_board(board)
 			game_end = True
-
-		# updateBoard
-		# do validity checks
-		# need a means of changing a tile back to 0 if needed
 
 
 def main():
     play_game(board)
-    # pass
+
 
 if __name__ == "__main__":
     main()
