@@ -1,4 +1,8 @@
-boards = [
+import numpy
+
+
+
+board_states = [
  	[
 		[3, 0, 6, 5, 0, 8, 4, 0, 0],
 		[5, 2, 0, 0, 0, 0, 0, 0, 0],
